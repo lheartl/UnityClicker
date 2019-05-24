@@ -69,8 +69,9 @@ public class BuyingItem : MonoBehaviour
 
     public void buyItem() {
         Debug.Log("클릭");
-        if (nowIncreaseValue <= DataController.Instance.haveGold) {
-            GameManager.Instance.useGold(nowIncreaseValue);
+        if (nowItemPrice <= DataController.Instance.haveGold) {
+            GameManager.Instance.useGold(nowItemPrice);
+
             itemLevel++;
 
             nowItemPrice = startItemPrice * (int)Mathf.Pow(increaseItemPrice, itemLevel);

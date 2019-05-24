@@ -44,6 +44,7 @@ public class GameManager : Singleton<GameManager>
     }
 
     public void useGold(int gold) {
+        Debug.Log("현재 골드 : "+ DataController.Instance.haveGold+"/사용골드 : "+ gold);
         DataController.Instance.haveGold -= gold;
     }
     
