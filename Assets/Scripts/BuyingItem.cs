@@ -13,7 +13,7 @@ public class BuyingItem : MonoBehaviour
     public Text nextIncreaseText;
 
     [Header("ItemInfo Private")]
-    public string itemName = "카타나";
+    public string itemName = "katana1";
     [SerializeField]
     public int itemLevel = 1;
     [SerializeField]
@@ -32,11 +32,24 @@ public class BuyingItem : MonoBehaviour
 
     private void Start()
     {
+
+        if (PlayerPrefs.HasKey(itemName + "_nowItemPrice"))
+        {
+            price_slider.maxValue = PlayerPrefs.GetInt(itemName + "_nowItemPrice", startItemPrice);
+            nowItemPrice = PlayerPrefs.GetInt(itemName + "_nowItemPrice", startItemPrice);
+            nowIncreaseValue = PlayerPrefs.GetInt(itemName + "_nowIncreaseValue", 0);
+            beforeIncreaseValue = PlayerPrefs.GetInt(itemName + "_beforeIncreaseValue", 0);
+            itemLevel = PlayerPrefs.GetInt(itemName + "_itemLevel", 1);
+        }
+        else {
+            price_slider.maxValue = startItemPrice;
+            nowItemPrice = startItemPrice;
+            nowIncreaseValue = 0;
+            beforeIncreaseValue = 0;
+            itemLevel = 1;
+        }
         
 
-        price_slider.maxValue = startItemPrice;
-        nowItemPrice = startItemPrice;
-        nowIncreaseValue = autoIncreaseValue;
         StartCoroutine("AutoIncreaseWork");
 
         priceText.text = "가격 : " + nowItemPrice;
@@ -46,7 +59,8 @@ public class BuyingItem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (nowItemPrice <= DataController.Instance.haveGold)
+
+        if (nowItemPrice <= GameManager.Instance.HaveGold)
         {
             
             cGroup.interactable = true;
@@ -63,14 +77,14 @@ public class BuyingItem : MonoBehaviour
             cGroup.alpha = price_slider.normalizedValue;
         }
         
-        price_slider.value = DataController.Instance.haveGold;
+        price_slider.value = GameManager.Instance.HaveGold;
        
     }
 
     public void buyItem() {
         Debug.Log("클릭");
-        if (nowItemPrice <= DataController.Instance.haveGold) {
-            GameManager.Instance.useGold(nowItemPrice);
+        if (nowItemPrice <= GameManager.Instance.haveGold) {
+            GameManager.Instance.HaveGold -= nowItemPrice;
 
             itemLevel++;
 
@@ -78,6 +92,12 @@ public class BuyingItem : MonoBehaviour
             beforeIncreaseValue = nowIncreaseValue;
             nowIncreaseValue = autoIncreaseValue * (int)Mathf.Pow(increaseItemValue, itemLevel);
             price_slider.maxValue = nowItemPrice;
+
+            PlayerPrefs.SetInt(itemName+ "_nowItemPrice", nowItemPrice);
+            PlayerPrefs.SetInt(itemName + "_beforeIncreaseValue", beforeIncreaseValue);
+            PlayerPrefs.SetInt(itemName + "_nowIncreaseValue", nowIncreaseValue);
+            PlayerPrefs.SetInt(itemName + "_itemLevel", itemLevel);
+
 
             priceText.text = "가격 : " + nowItemPrice;
             autoIncreaseText.text = "초당 증가값 : " + beforeIncreaseValue;
@@ -92,7 +112,7 @@ public class BuyingItem : MonoBehaviour
         while (true)
         {
             if (itemLevel>1) {
-                GameManager.Instance.addGold(nowIncreaseValue);
+                GameManager.Instance.HaveGold += nowIncreaseValue;
             }
             yield return new WaitForSeconds(1f);
         }
