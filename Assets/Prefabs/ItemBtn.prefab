@@ -544,9 +544,9 @@ MonoBehaviour:
   autoIncreaseValue: 5
   nowItemPrice: 0
   nowIncreaseValue: 0
-  nextIncreaseValue: 0
+  beforeIncreaseValue: 0
   increaseItemPrice: 1.9
-  increaseItemValue: 1.34
+  increaseItemValue: 1.51
 --- !u!1 &4735432913824657429
 GameObject:
   m_ObjectHideFlags: 0
